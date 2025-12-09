@@ -65,7 +65,7 @@ export default function TopSupplierVolume() {
                     <p className="font-semibold">{p.supplier_name}</p>
                     <p>Total Qty: {p.total_qty.toLocaleString()} unit</p>
                     <p>
-                      Total Spent: Rp {p.total_spent.toLocaleString("id-ID")}
+                      Total Spent: USD {p.total_spent.toLocaleString("id-ID")}
                     </p>
                   </div>
                 );

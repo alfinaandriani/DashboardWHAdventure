@@ -73,7 +73,7 @@ export default function TopDiscountedProducts() {
                     <p>
                       Total Nominal Diskon:{" "}
                       <span className="font-semibold">
-                        Rp {p.total_discount_amount.toLocaleString()}
+                        USD {p.total_discount_amount.toLocaleString()}
                       </span>
                     </p>
                   </div>

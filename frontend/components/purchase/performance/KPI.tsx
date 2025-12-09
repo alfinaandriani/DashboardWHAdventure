@@ -42,7 +42,7 @@ export default function KPIPurchase() {
       <div className="bg-gradient-to-r from-blue-500 to-blue-600 text-white p-4 rounded-xl shadow">
         <h3 className="text-sm font-medium">Total Purchase</h3>
         <p className="text-2xl font-bold">
-          Rp {kpi.total_purchasing_amount.toLocaleString()}
+          USD {kpi.total_purchasing_amount.toLocaleString()}
         </p>
       </div>
       <div className="bg-gradient-to-r from-green-500 to-green-600 text-white p-4 rounded-xl shadow">
@@ -54,7 +54,7 @@ export default function KPIPurchase() {
       <div className="bg-gradient-to-r from-purple-500 to-purple-600 text-white p-4 rounded-xl shadow">
         <h3 className="text-sm font-medium">Avg Purchase Value</h3>
         <p className="text-2xl font-bold">
-          Rp {kpi.avg_purchase_value.toLocaleString()}
+          USD {kpi.avg_purchase_value.toLocaleString()}
         </p>
       </div>
     </div>

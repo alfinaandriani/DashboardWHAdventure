@@ -48,7 +48,7 @@ export default function WeekendWeekdays() {
 
           <YAxis
             tickFormatter={(value) =>
-              `Rp ${Number(value).toLocaleString("id-ID")}`
+              `USD ${Number(value).toLocaleString("en-EN")}`
             }
             tick={{ fontSize: 12 }}
             allowDecimals={false}
@@ -64,7 +64,7 @@ export default function WeekendWeekdays() {
                     <p>
                       Total Penjualan:{" "}
                       <span className="font-semibold">
-                        Rp {Number(p.total_sales).toLocaleString("id-ID")}
+                        USD {Number(p.total_sales).toLocaleString("en-EN")}
                       </span>
                     </p>
                   </div>

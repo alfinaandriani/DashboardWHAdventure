@@ -44,7 +44,7 @@ export default function BestMonth() {
 
           <YAxis
             tickFormatter={(value) =>
-              `Rp ${Number(value).toLocaleString("id-ID")}`
+              `USD ${Number(value).toLocaleString("en-EN")}`
             }
             tick={{ fontSize: 12 }}
           />
@@ -59,7 +59,7 @@ export default function BestMonth() {
                     <p>
                       Total Penjualan:{" "}
                       <span className="font-semibold">
-                        Rp {p.total_sales.toLocaleString("id-ID")}
+                        USD {p.total_sales.toLocaleString("en-EN")}
                       </span>
                     </p>
                   </div>

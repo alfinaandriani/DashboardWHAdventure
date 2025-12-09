@@ -143,7 +143,7 @@ export default function PurchaseTimeSeriesDrillDown() {
 
           <YAxis
             tickFormatter={(value) =>
-              `Rp ${Number(value).toLocaleString("id-ID")}`
+              `USD ${Number(value).toLocaleString("id-ID")}`
             }
             tick={{ fontSize: 12 }}
           />
@@ -163,7 +163,7 @@ export default function PurchaseTimeSeriesDrillDown() {
                     <p>
                       Total Pembelian:{" "}
                       <span className="font-semibold">
-                        Rp{" "}
+                        USD{" "}
                         {Number(
                           view === "monthly"
                             ? p.total_purchase

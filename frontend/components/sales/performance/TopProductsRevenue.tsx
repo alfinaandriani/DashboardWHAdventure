@@ -45,7 +45,7 @@ export default function TopProducts() {
         <BarChart data={data} layout="vertical">
           <XAxis
             type="number"
-            tickFormatter={(v) => `Rp ${v.toLocaleString()}`}
+            tickFormatter={(v) => `USD ${v.toLocaleString()}`}
             domain={[0, 5000000]}
           />
           <YAxis
@@ -65,7 +65,7 @@ export default function TopProducts() {
                     <p>Kategori: {p.category}</p>
                     <p>Sub Kategori: {p.subcategory}</p>
                     <p className="font-semibold mt-1">
-                      Revenue: Rp {Number(p.total_revenue).toLocaleString()}
+                      Revenue: USD {Number(p.total_revenue).toLocaleString()}
                     </p>
                   </div>
                 );
