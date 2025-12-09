@@ -56,7 +56,7 @@ export default function EmployeeMonthlyTrend() {
                     <p>
                       Total Sales:{" "}
                       <span className="font-semibold">
-                        Rp {p.total_sales.toLocaleString()}
+                        USD {p.total_sales.toLocaleString()}
                       </span>
                     </p>
                   </div>

@@ -54,7 +54,7 @@ export default function CustomerTypeRevenue() {
 
           <YAxis
             tickFormatter={(value) =>
-              `Rp ${Number(value).toLocaleString("id-ID")}`
+              `USD ${Number(value).toLocaleString("id-ID")}`
             }
             tick={{ fontSize: 12 }}
             allowDecimals={false}
@@ -72,7 +72,7 @@ export default function CustomerTypeRevenue() {
                     <p>
                       Total Revenue:{" "}
                       <span className="font-semibold">
-                        Rp {Number(p.total_revenue || 0).toLocaleString()}
+                        USD {Number(p.total_revenue || 0).toLocaleString()}
                       </span>
                     </p>
                   </div>

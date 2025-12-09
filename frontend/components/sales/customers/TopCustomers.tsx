@@ -47,7 +47,7 @@ export default function TopCustomers() {
 
           <XAxis
             type="number"
-            tickFormatter={(v) => `Rp ${v.toLocaleString()}`}
+            tickFormatter={(v) => `USD ${v.toLocaleString()}`}
           />
 
           <YAxis
@@ -71,7 +71,7 @@ export default function TopCustomers() {
                     <p>
                       Total Revenue:{" "}
                       <span className="font-semibold">
-                        Rp {p.total_revenue.toLocaleString()}
+                        USD {p.total_revenue.toLocaleString()}
                       </span>
                     </p>
                   </div>

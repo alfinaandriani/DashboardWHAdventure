@@ -43,7 +43,7 @@ export default function EmployeePerformance() {
         <BarChart data={data} layout="vertical">
           <XAxis
             type="number"
-            tickFormatter={(v) => `Rp ${v.toLocaleString()}`}
+            tickFormatter={(v) => `USD ${v.toLocaleString()}`}
           />
           <YAxis
             type="category"
@@ -63,7 +63,7 @@ export default function EmployeePerformance() {
                     <p>
                       Total Penjualan:{" "}
                       <span className="font-semibold">
-                        Rp {Number(p.total_sales).toLocaleString()}
+                        USD {Number(p.total_sales).toLocaleString()}
                       </span>
                     </p>
                   </div>
