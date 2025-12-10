@@ -2,7 +2,6 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { users } from "../data/users";
 
 export default function LoginPage() {
   const router = useRouter();
@@ -10,31 +9,41 @@ export default function LoginPage() {
   const [password, setPassword] = useState("");
   const [error, setError] = useState("");
 
-  const handleLogin = (e: any) => {
+  const handleLogin = async (e: any) => {
     e.preventDefault();
+    setError("");
 
-    // cek user hardcode
-    const user = users.find(
-      (u) => u.email === email && u.password === password
-    );
+    try {
+      const res = await fetch("http://localhost:3001/login", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ email, password }),
+      });
 
-    if (!user) {
-      setError("Email atau password salah");
-      return;
+      const data = await res.json();
+
+      if (!res.ok) {
+        setError(data.message || "Login gagal");
+        return;
+      }
+
+      // simpan token + user ke localStorage
+      localStorage.setItem("token", data.token);
+      localStorage.setItem("user", JSON.stringify(data.user));
+
+      router.push("/sales/performance");
+    } catch (err) {
+      setError("Terjadi kesalahan server");
     }
-
-    // simpan session lokal
-    localStorage.setItem("token", "login_success_token");
-    localStorage.setItem("user", JSON.stringify(user));
-
-    router.push("/sales/performance");
   };
 
   return (
     <div className="flex justify-center items-center h-screen bg-gray-100">
       <form
         onSubmit={handleLogin}
-        className="bg-white p-8 shadow-xl rounded-xl w-96"
+        className="bg-white p-8 shadow-lg rounded-xl w-96"
       >
         <h1 className="text-2xl font-bold mb-4">Login</h1>
 

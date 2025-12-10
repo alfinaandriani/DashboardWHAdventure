@@ -3,8 +3,6 @@
 export default function PurchasingCube() {
   return (
     <div className="p-6">
-      <h1 className="text-2xl font-semibold mb-4">Purchasing Cube</h1>
-
       <iframe
         src="http://localhost:8080/mondrian/testpage.jsp?query=purchasing"
         style={{
