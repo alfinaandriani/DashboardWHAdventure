@@ -9,48 +9,52 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
+  Cell,
 } from "recharts";
 
-interface EmployeePerformance {
-  full_name: string;
-  total_sales: number;
+interface RejectedCost {
+  product_name: string;
+  rejected_cost: number;
 }
 
-export default function EmployeePerformance() {
-  const [data, setData] = useState<EmployeePerformance[]>([]);
+export default function RejectedCostChart() {
+  const [data, setData] = useState<RejectedCost[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/sales/employee/employee-performance")
+    fetch("http://localhost:3001/api/purchase/procurement/rejected-cost")
       .then((res) => res.json())
-      .then((items) => {
+      .then((items) =>
         setData(
           items.map((d: any) => ({
-            full_name: d.full_name,
-            total_sales: Number(d.total_sales),
+            product_name: d.product_name,
+            rejected_cost: Number(d.rejected_cost),
           }))
-        );
-      });
+        )
+      );
   }, []);
 
-  const maxQty = Math.max(...data.map((d) => d.total_sales), 1);
-  const adjustedMax = Math.ceil(maxQty / 10) * 10;
+  const maxCost = Math.max(...data.map((d) => d.rejected_cost), 1);
+  const adjustedMax = Math.ceil(maxCost / 10) * 10;
 
   return (
     <div className="bg-white p-4 rounded-xl shadow">
-      <h3 className="font-semibold mb-2">Kinerja Karyawan</h3>
+      <h3 className="font-semibold mb-3">
+        Cost Impact Produk Rejected
+      </h3>
 
       <ResponsiveContainer width="100%" height={350}>
         <BarChart data={data} layout="vertical">
           <XAxis
             type="number"
+            domain={[0, adjustedMax]}
             tickFormatter={(v) => `USD ${v.toLocaleString()}`}
           />
+
           <YAxis
             type="category"
-            dataKey="full_name"
+            dataKey="product_name"
             width={200}
             interval={0}
-            tick={{ fontSize: 12 }}
           />
 
           <Tooltip
@@ -59,12 +63,10 @@ export default function EmployeePerformance() {
                 const p = payload[0].payload;
                 return (
                   <div className="bg-white p-3 rounded shadow border text-sm">
-                    <p className="font-semibold">{p.full_name}</p>
-                    <p>
-                      Total Penjualan:{" "}
-                      <span className="font-semibold">
-                        USD {Number(p.total_sales).toLocaleString()}
-                      </span>
+                    <p className="font-semibold">{p.product_name}</p>
+                    <p className="font-semibold text-blue-600 mt-1">
+                      Cost Rejected: USD{" "}
+                      {p.rejected_cost.toLocaleString()}
                     </p>
                   </div>
                 );
@@ -75,7 +77,11 @@ export default function EmployeePerformance() {
 
           <Legend />
 
-          <Bar dataKey="total_sales" name="Total Penjualan" fill="#3b82f6" />
+          <Bar dataKey="rejected_cost" name="Rejected Cost">
+            {data.map((_, index) => (
+              <Cell key={index} fill="#3b82f6" />
+            ))}
+          </Bar>
         </BarChart>
       </ResponsiveContainer>
     </div>

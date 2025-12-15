@@ -19,7 +19,11 @@ const Sidebar = () => {
   const [openSales, setOpenSales] = useState(true);
   const [openPurchase, setOpenPurchase] = useState(true);
   const [openMondrian, setOpenMondrian] = useState(true);
-
+  const handleLogout = () => {
+    localStorage.removeItem("token");
+    localStorage.removeItem("user");
+    window.location.href = "/login";
+  };
 
   const salesItems = [
     {
@@ -191,6 +195,12 @@ const Sidebar = () => {
           </nav>
         )}
       </div>
+      <button
+        onClick={handleLogout}
+        className="w-full mt-4 bg-red-500 py-2 rounded-lg font-medium hover:bg-red-600 transition"
+      >
+        Logout
+        </button>
     </div>
   );
 };

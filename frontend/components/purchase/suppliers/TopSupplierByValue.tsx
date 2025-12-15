@@ -11,48 +11,58 @@ import {
   Legend,
 } from "recharts";
 
-interface TopSupplierVolume {
+interface TopSupplierByValue {
   supplier_name: string;
-  total_qty: number;
   total_spent: number;
+  total_qty: number;
 }
 
-export default function TopSupplierVolume() {
-  const [data, setData] = useState<TopSupplierVolume[]>([]);
+export default function TopSupplierByValue() {
+  const [data, setData] = useState<TopSupplierByValue[]>([]);
 
   useEffect(() => {
-    fetch("http://localhost:3001/api/purchase/performance/top-supplier")
+    fetch(
+      "http://localhost:3001/api/purchase/performance/top-supplier-by-value"
+    )
       .then((res) => res.json())
       .then((items) => {
-        if (!Array.isArray(items)) return;
-
         setData(
           items.map((d: any) => ({
             supplier_name: d.supplier_name,
-            total_qty: Number(d.total_qty),
             total_spent: Number(d.total_spent),
+            total_qty: Number(d.total_qty),
           }))
         );
       });
   }, []);
 
-  const maxQty = Math.max(...data.map((d) => d.total_qty), 1);
-  const adjustedMax = Math.ceil(maxQty / 10) * 10;
+  const maxValue =
+    data.length > 0
+      ? Math.max(...data.map((d) => d.total_spent))
+      : 0;
+
+  const adjustedMax = Math.ceil(maxValue / 10) * 10 || 10;
 
   return (
     <div className="bg-white p-4 rounded-xl shadow">
       <h3 className="font-semibold mb-2">
-        Top Supplier Berdasarkan Volume Pembelian
+        Top Supplier Berdasarkan Nilai Pembelian
       </h3>
 
-      <ResponsiveContainer width="100%" height={360}>
+      <ResponsiveContainer width="100%" height={350}>
         <BarChart data={data} layout="vertical">
-          <XAxis type="number" domain={[0, adjustedMax]} />
+          <XAxis
+            type="number"
+            domain={[0, adjustedMax]}
+            tickFormatter={(value) =>
+              `USD ${value.toLocaleString()}`
+            }
+          />
 
           <YAxis
             type="category"
             dataKey="supplier_name"
-            width={180}
+            width={200}
             interval={0}
           />
 
@@ -63,9 +73,13 @@ export default function TopSupplierVolume() {
                 return (
                   <div className="bg-white p-3 rounded shadow border text-sm">
                     <p className="font-semibold">{p.supplier_name}</p>
-                    <p>Total Qty: {p.total_qty.toLocaleString()} unit</p>
                     <p>
-                      Total Spent: USD {p.total_spent.toLocaleString("id-ID")}
+                      Total Quantity:{" "}
+                      {p.total_qty.toLocaleString()} unit
+                    </p>
+                    <p className="font-semibold mt-1">
+                      Total Value: USD{" "}
+                      {p.total_spent.toLocaleString()}
                     </p>
                   </div>
                 );
@@ -75,8 +89,11 @@ export default function TopSupplierVolume() {
           />
 
           <Legend />
-
-          <Bar dataKey="total_qty" name="Total Qty" fill="#ec4899" />
+          <Bar
+            dataKey="total_spent"
+            name="Purchase Value"
+            fill="#16a34a"
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>

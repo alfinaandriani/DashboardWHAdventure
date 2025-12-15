@@ -52,7 +52,7 @@ export default function DiscountImpact() {
 
           <YAxis
             tickFormatter={(value) =>
-              `Rp ${Number(value).toLocaleString("id-ID")}`
+              `USD ${Number(value).toLocaleString("id-ID")}`
             }
             tick={{ fontSize: 12 }}
             allowDecimals={false}
@@ -68,13 +68,13 @@ export default function DiscountImpact() {
                     <p>Order Count: {p.order_count || "-"}</p>
                     <p>
                       Avg Revenue per Order:{" "}
-                      {`Rp ${p.avg_revenue_per_order.toLocaleString(
+                      {`USD ${p.avg_revenue_per_order.toLocaleString(
                         "id-ID"
                       )}` || "-"}
                     </p>
                     <p className="font-semibold mt-1">
                       Total Revenue:{" "}
-                      {`Rp ${p.total_revenue.toLocaleString("id-ID")}`}
+                      {`USD ${p.total_revenue.toLocaleString("id-ID")}`}
                     </p>
                   </div>
                 );

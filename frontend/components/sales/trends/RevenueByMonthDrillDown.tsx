@@ -141,7 +141,7 @@ export default function TimeSeriesDrillDown() {
         <BarChart data={view === "monthly" ? monthlyData : weeklyData}>
           <XAxis dataKey={view === "monthly" ? "month_name" : "week_number"} />
           <YAxis
-            tickFormatter={(value) => `Rp ${value.toLocaleString()}`}
+            tickFormatter={(value) => `USD ${value.toLocaleString()}`}
             tick={{ fontSize: 12 }}
           />
           <Tooltip
@@ -159,7 +159,7 @@ export default function TimeSeriesDrillDown() {
                     <p>
                       Total Penjualan:{" "}
                       <span className="font-semibold">
-                        Rp {Number(p.revenue).toLocaleString("id-ID")}
+                        USD {Number(p.revenue).toLocaleString("id-ID")}
                       </span>
                     </p>
                   </div>

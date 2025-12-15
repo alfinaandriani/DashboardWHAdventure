@@ -13,6 +13,30 @@ const pool = mysql.createPool({
   database: "whadventure",
 });
 
+// LOGIN //
+app.post("/login", async (req, res) => {
+  const { email, password } = req.body;
+
+  try {
+    const [rows] = await pool.query(
+      "SELECT * FROM users WHERE email = ? AND password = ?",
+      [email, password]
+    );
+
+    if (rows.length === 0) {
+      return res.status(401).json({ message: "Email atau password salah" });
+    }
+
+    res.json({
+      message: "Login berhasil",
+      user: rows[0],
+    });
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ message: "Server error" });
+  }
+});
+
 // SALES //
 
 // KPI Sales
@@ -398,7 +422,7 @@ app.get("/api/purchase/performance/kpi", async (req, res) => {
   res.json(rows[0] || { total_expenditure: 0, avg_purchase_value: 0 });
 });
 
-// Top Product Purchase
+// Top Product Purchase by unit
 app.get("/api/purchase/performance/top-product-purchase", async (req, res) => {
   const [rows] = await pool.query(`
     SELECT 
@@ -422,6 +446,35 @@ app.get("/api/purchase/performance/top-product-purchase", async (req, res) => {
   res.json(rows);
 });
 
+// Top Product Purchase by Value
+app.get("/api/purchase/performance/top-product-purchase-value", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        p.product_name,
+        p.category,
+        p.subcategory,
+        SUM(fp.OrderQty) AS total_qty,
+        SUM(fp.LineTotal) AS total_purchased
+      FROM fact_purchasing fp
+      JOIN dim_product p 
+        ON fp.product_id = p.product_id
+      GROUP BY 
+        p.product_id,
+        p.product_name,
+        p.category,
+        p.subcategory
+      ORDER BY total_purchased DESC
+      LIMIT 10;
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Top Product Purchase by Value Error:", err);
+    res.status(500).json({ error: "Failed to fetch top product by value" });
+  }
+});
+
 // Top Supplier by Purchase Amount
 app.get("/api/purchase/performance/top-supplier", async (req, res) => {
   const [rows] = await pool.query(`
@@ -441,6 +494,32 @@ app.get("/api/purchase/performance/top-supplier", async (req, res) => {
   res.json(rows);
 });
 
+// Top Supplier by Purchase Value
+app.get("/api/purchase/performance/top-supplier-by-value", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        s.supplier_name,
+        SUM(fp.OrderQty) AS total_qty,
+        SUM(fp.LineTotal) AS total_spent
+      FROM fact_purchasing fp
+      JOIN dim_supplier s 
+        ON fp.supplier_id = s.supplier_id
+      GROUP BY 
+        s.supplier_id,
+        s.supplier_name
+      ORDER BY total_spent DESC
+      LIMIT 10;
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Top Supplier by Value Error:", err);
+    res.status(500).json({ error: "Failed to fetch top supplier by value" });
+  }
+});
+
+
 // Most Rejected Product
 app.get("/api/purchase/insight/most-rejected", async (req, res) => {
   const [rows] = await pool.query(`
@@ -458,6 +537,60 @@ app.get("/api/purchase/insight/most-rejected", async (req, res) => {
   `);
   res.json(rows);
 });
+
+// Rejection Rate per Product
+app.get("/api/purchase/procurement/rejection-rate", async (req, res) => {
+  const [rows] = await pool.query(`
+    SELECT 
+      p.product_name,
+      SUM(fp.RejectedQty) AS rejected_qty,
+      SUM(fp.OrderQty) AS total_qty,
+      (SUM(fp.RejectedQty) / SUM(fp.OrderQty)) * 100 AS rejection_rate
+    FROM fact_purchasing fp
+    JOIN dim_product p ON fp.product_id = p.product_id
+    GROUP BY p.product_id, p.product_name
+    HAVING SUM(fp.OrderQty) > 0
+    ORDER BY rejection_rate DESC
+    LIMIT 10;
+  `);
+
+  res.json(rows);
+});
+
+// Received vs Rejected per Product
+app.get("/api/purchase/procurement/received-vs-rejected", async (req, res) => {
+  const [rows] = await pool.query(`
+    SELECT 
+      p.product_name,
+      SUM(fp.OrderQty) - SUM(fp.RejectedQty) AS received_qty,
+      SUM(fp.RejectedQty) AS rejected_qty
+    FROM fact_purchasing fp
+    JOIN dim_product p ON fp.product_id = p.product_id
+    GROUP BY p.product_id, p.product_name
+    ORDER BY rejected_qty DESC
+    LIMIT 10;
+  `);
+
+  res.json(rows);
+});
+
+// Cost Impact of Rejected Products
+app.get("/api/purchase/procurement/rejected-cost", async (req, res) => {
+  const [rows] = await pool.query(`
+    SELECT 
+      p.product_name,
+      SUM(fp.RejectedQty * fp.UnitPrice) AS rejected_cost
+    FROM fact_purchasing fp
+    JOIN dim_product p ON fp.product_id = p.product_id
+    GROUP BY p.product_id, p.product_name
+    HAVING rejected_cost > 0
+    ORDER BY rejected_cost DESC
+    LIMIT 10;
+  `);
+
+  res.json(rows);
+});
+
 
 // GET all purchase years
 app.get("/api/purchase/years", async (req, res) => {

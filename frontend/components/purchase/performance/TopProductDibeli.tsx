@@ -42,7 +42,7 @@ export default function TopPurchasedProducts() {
 
   return (
     <div className="bg-white p-4 rounded-xl shadow">
-      <h3 className="font-semibold mb-2">Top 10 Produk Dibeli</h3>
+      <h3 className="font-semibold mb-2">Top 10 produk dengan jumlah unit pembelian terbanyak</h3>
 
       <ResponsiveContainer width="100%" height={350}>
         <BarChart data={data} layout="vertical">

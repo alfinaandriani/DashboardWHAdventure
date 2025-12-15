@@ -50,7 +50,7 @@ export default function RevenuePerMonth() {
           <XAxis dataKey="month" />
 
           <YAxis
-            tickFormatter={(value) => `Rp ${value.toLocaleString()}`}
+            tickFormatter={(value) => `USD ${value.toLocaleString()}`}
             tick={{ fontSize: 12 }}
           />
 
@@ -64,7 +64,7 @@ export default function RevenuePerMonth() {
                     <p>
                       Revenue:{" "}
                       <span className="font-semibold">
-                        Rp {p.total_revenue.toLocaleString()}
+                        USD {p.total_revenue.toLocaleString()}
                       </span>
                     </p>
                   </div>
