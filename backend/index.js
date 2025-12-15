@@ -666,6 +666,64 @@ app.get("/api/purchase/weekly", async (req, res) => {
   }
 });
 
+app.get("/api/purchase/trends/top-monthly-spend", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT 
+        d.year,
+        d.month,
+        d.month_name,
+        SUM(fp.LineTotal) AS total_spent
+      FROM fact_purchasing fp
+      JOIN dim_date d 
+        ON fp.date_id = d.date_id
+      GROUP BY 
+        d.year, d.month, d.month_name
+      ORDER BY total_spent DESC
+      LIMIT 10
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Top Monthly Spend Error:", err);
+    res.status(500).json({ error: "Failed to fetch top monthly spend" });
+  }
+});
+
+app.get("/api/purchase/trends/monthly-growth-value", async (req, res) => {
+  try {
+    const [rows] = await pool.query(`
+      SELECT
+        curr.year,
+        curr.month,
+        curr.month_name,
+        curr.total_purchase,
+        curr.total_purchase 
+          - LAG(curr.total_purchase) 
+            OVER (ORDER BY curr.year, curr.month) 
+          AS growth_value
+      FROM (
+        SELECT
+          d.year,
+          d.month,
+          d.month_name,
+          SUM(fp.LineTotal) AS total_purchase
+        FROM fact_purchasing fp
+        JOIN dim_date d ON fp.date_id = d.date_id
+        GROUP BY d.year, d.month, d.month_name
+      ) curr
+      ORDER BY curr.year, curr.month
+    `);
+
+    res.json(rows);
+  } catch (err) {
+    console.error("Monthly Growth Value Error:", err);
+    res.status(500).json({ error: "Failed to fetch purchasing growth value" });
+  }
+});
+
+
+
 // Jalankan server
 const PORT = 3001;
 app.listen(PORT, () => {
