@@ -5,7 +5,7 @@ export default function PurchasingCube() {
     <div className="p-6">
       <iframe
         id="mondrianFrame"
-        src="http://localhost:8081/mondrian/testpage.jsp?query=purchasing"
+        src="http://localhost:8080/mondrian/testpage.jsp?query=purchasing"
         style={{
           width: "100%",
           height: "85vh",
