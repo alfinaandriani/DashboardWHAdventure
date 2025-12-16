@@ -2,10 +2,8 @@
 
 import { useEffect, useState } from "react";
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
+  PieChart,
+  Pie,
   Tooltip,
   ResponsiveContainer,
   Legend,
@@ -15,7 +13,17 @@ import {
 interface RejectionRateProduct {
   product_name: string;
   rejection_rate: number;
+  [key: string]: string | number;
 }
+
+const COLORS = [
+  "#f97316",
+  "#fb923c",
+  "#fdba74",
+  "#fed7aa",
+  "#ea580c",
+  "#c2410c",
+];
 
 export default function RejectionRateProducts() {
   const [data, setData] = useState<RejectionRateProduct[]>([]);
@@ -33,10 +41,6 @@ export default function RejectionRateProducts() {
       );
   }, []);
 
-  // Hitung batas XAxis
-  const maxRate = Math.max(...data.map((d) => d.rejection_rate), 1);
-  const adjustedMax = Math.ceil(maxRate / 10) * 10;
-
   return (
     <div className="bg-white p-4 rounded-xl shadow">
       <h3 className="font-semibold mb-3">
@@ -44,45 +48,30 @@ export default function RejectionRateProducts() {
       </h3>
 
       <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} layout="vertical">
-          <XAxis
-            type="number"
-            domain={[0, adjustedMax]}
-            tickFormatter={(v) => `${v.toFixed(1)} %`}
-          />
-
-          <YAxis
-            type="category"
-            dataKey="product_name"
-            width={200}
-            interval={0}
-          />
+        <PieChart>
+          <Pie
+            data={data}
+            dataKey="rejection_rate"
+            nameKey="product_name"
+            cx="50%"
+            cy="50%"
+            outerRadius={120}
+            label={({ name, percent = 0 }) =>
+              `${name} ${(percent * 100).toFixed(1)}%`
+            }
+          >
+            {data.map((_, index) => (
+              <Cell
+                key={`cell-${index}`}
+                fill={COLORS[index % COLORS.length]}
+              />
+            ))}
+          </Pie>
 
           <Tooltip
-            content={({ active, payload }) => {
-              if (active && payload && payload.length > 0) {
-                const p = payload[0].payload;
-                return (
-                  <div className="bg-white p-3 rounded shadow border text-sm">
-                    <p className="font-semibold">{p.product_name}</p>
-                    <p className="font-semibold text-orange-600 mt-1">
-                      Rejection Rate: {p.rejection_rate.toFixed(2)} %
-                    </p>
-                  </div>
-                );
-              }
-              return null;
-            }}
+            formatter={(value: number) => `${value.toFixed(2)} %`}
           />
-
-          <Legend />
-
-          <Bar dataKey="rejection_rate" name="Rejection Rate (%)">
-            {data.map((_, index) => (
-              <Cell key={index} fill="#f97316" />
-            ))}
-          </Bar>
-        </BarChart>
+        </PieChart>
       </ResponsiveContainer>
     </div>
   );

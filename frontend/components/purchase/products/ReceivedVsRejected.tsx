@@ -9,7 +9,6 @@ import {
   Tooltip,
   ResponsiveContainer,
   Legend,
-  Cell,
 } from "recharts";
 
 interface ReceivedRejected {
@@ -35,9 +34,9 @@ export default function ReceivedVsRejectedChart() {
       );
   }, []);
 
-  // Hitung batas XAxis
+  // Batas YAxis
   const maxValue = Math.max(
-    ...data.map((d) => d.received_qty + d.rejected_qty),
+    ...data.flatMap((d) => [d.received_qty, d.rejected_qty]),
     1
   );
   const adjustedMax = Math.ceil(maxValue / 10) * 10;
@@ -49,49 +48,43 @@ export default function ReceivedVsRejectedChart() {
       </h3>
 
       <ResponsiveContainer width="100%" height={350}>
-        <BarChart data={data} layout="vertical">
-          <XAxis type="number" domain={[0, adjustedMax]} />
+        <BarChart data={data} barGap={6}>
+          <XAxis
+            dataKey="product_name"
+            interval={0}
+            angle={-30}
+            textAnchor="end"
+            height={80}
+          />
 
           <YAxis
-            type="category"
-            dataKey="product_name"
-            width={200}
-            interval={0}
+            domain={[0, adjustedMax]}
+            tickFormatter={(v) => v.toLocaleString()}
           />
 
           <Tooltip
-            content={({ active, payload }) => {
-              if (active && payload && payload.length > 0) {
-                const p = payload[0].payload;
-                return (
-                  <div className="bg-white p-3 rounded shadow border text-sm">
-                    <p className="font-semibold">{p.product_name}</p>
-                    <p className="text-green-600">
-                      Received: {p.received_qty.toLocaleString()} unit
-                    </p>
-                    <p className="text-red-600">
-                      Rejected: {p.rejected_qty.toLocaleString()} unit
-                    </p>
-                  </div>
-                );
-              }
-              return null;
-            }}
+            formatter={(value: number) =>
+              `${value.toLocaleString()} unit`
+            }
           />
 
           <Legend />
 
-          <Bar dataKey="received_qty" name="Received" stackId="a">
-            {data.map((_, index) => (
-              <Cell key={index} fill="#22c55e" />
-            ))}
-          </Bar>
+          {/* Received */}
+          <Bar
+            dataKey="received_qty"
+            name="Received"
+            fill="#22c55e"
+            radius={[6, 6, 0, 0]}
+          />
 
-          <Bar dataKey="rejected_qty" name="Rejected" stackId="a">
-            {data.map((_, index) => (
-              <Cell key={index} fill="#ef4444" />
-            ))}
-          </Bar>
+          {/* Rejected */}
+          <Bar
+            dataKey="rejected_qty"
+            name="Rejected"
+            fill="#ef4444"
+            radius={[6, 6, 0, 0]}
+          />
         </BarChart>
       </ResponsiveContainer>
     </div>
